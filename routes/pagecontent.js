@@ -12,7 +12,7 @@ const { requireSignin, isAuth, isAdmin } = require('../controllers/auth');
 
 // inventory routes
 router.get('/pagecontent/:id', read);
-router.post('/pagecontent/create/:name', requireSignin, isAuth, isAdmin, create);
+router.post('/pagecontent/create/:name', requireSignin, create);
 
 
 router.param('id', pagecontentById);

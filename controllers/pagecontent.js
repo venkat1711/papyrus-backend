@@ -2,9 +2,10 @@ const PageContent = require('../models/pagecontent');
 const { errorHandler } = require('../helpers/dbErrorHandler');
 
 exports.create = (req, res) => {
-    const pageContent = new PageContent(req.body);
-    pageContent.save((err, data) => {
-        if (err) {
+    //const pageContent = new PageContent(req.body);
+    PageContent.findOneAndUpdate({"name":"homepage"}, req.body,{upsert: true}, function (err, data) {
+        //pageContent.save((err, data) => {
+          if (err) {
             return res.status(400).json({
                 error: errorHandler(err),
             });
@@ -13,15 +14,16 @@ exports.create = (req, res) => {
     });
 };
 
-exports.pagecontentById = (req, res, next, id) => {
-    PageContent.findById(id).exec((err, pagecontent) => {
+exports.pagecontentById = (req, res, next, name) => {
+    PageContent.find({"name":name}).exec((err, pagecontent) => {
+        console.log("error****"+err);
+        console.log("pagecontent****"+pagecontent)
         if (err || !pagecontent) {
             return res.status(400).json({
-                error: 'pagecontent not found',
+                error: 'pagecontent not found'+err,
             });
         }
-        req.pagecontent = pagecontent;
-        next();
+        res.json({ pagecontent });
     });
 };
 
@@ -30,8 +32,8 @@ exports.read = (req, res) => {
 };
 
 /*exports.remove = (req, res) => {
-    let inventory = req.inventory;
-    inventory.remove((err, data) => {
+    let pageContent = req.body;
+    pagecontent.remove((err, data) => {
         if (err) {
             return res.status(400).json({
                 error: errorHandler(err),
@@ -42,6 +44,7 @@ exports.read = (req, res) => {
         });
     });
 };
+
 
 exports.update = (req, res) => {
     const inventory = req.inventory;
