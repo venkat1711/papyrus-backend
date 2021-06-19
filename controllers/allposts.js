@@ -146,7 +146,17 @@ const handleQuery = async (req, res, query) => {
       .exec();
 
     res.json(allposts);
-  } else {
+  } else if(dataLt==0 && inventory===""&&bookform===""
+  &&genre===""&&provenance===""
+  && material===""&&acquisition===""){
+    console.log("test log");
+    const allposts = await Allposts.find()
+      .select('-photo')
+      .exec();
+
+    res.json(allposts);
+  }else{
+    console.log("test log final");
     const allposts = await Allposts.find({
       $or: [
         { $and: [{ inventory: { $eq: inventory, $exists: true, $ne: null } }] },
