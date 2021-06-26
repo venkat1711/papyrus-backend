@@ -70,7 +70,7 @@ const allpostsSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    CEDOPAL: {
+    MP3: {
       type: String,
       trim: true,
     },
@@ -86,7 +86,7 @@ const allpostsSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    columns: {
+    No of columns: {
       type: String,
       trim: true,
     },
