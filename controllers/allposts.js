@@ -126,9 +126,9 @@ exports.allpostsCount = async (req, res) => {
 
 
 const handleQuery = async (req, res, query) => {
-  const { inventory, author, genre, provenance, material, acquisition, bookform, fragment, dataGt, dataLt, dimension, cartonnage } = query;
+  const { inventory, author, genre, provenance, material, acquisition, bookform, fragment, dataGt, dataLt, dimension, cartonnage ,TM} = query;
 
-  if (dataGt || dataLt !== 0) {
+  /*if (dataGt || dataLt !== 0) {
     const allposts = await Allposts.find({
       $or: [
         { $and: [{ inventory: { $eq: inventory, $exists: true, $ne: null } }] },
@@ -146,9 +146,10 @@ const handleQuery = async (req, res, query) => {
       .exec();
 
     res.json(allposts);
-  } else if(dataLt==0 && inventory===""&&bookform===""
+  } else*/
+   if(dataGt==0&&dataLt==0 && inventory===""&&bookform===""
   &&genre===""&&provenance===""
-  && material===""&&acquisition===""){
+  && material===""&&acquisition===""&&TM==0){
     console.log("test log");
     const allposts = await Allposts.find()
       .select('-photo')
@@ -157,20 +158,41 @@ const handleQuery = async (req, res, query) => {
     res.json(allposts);
   }else{
     console.log("test log final");
-    const allposts = await Allposts.find({
-      $or: [
-        { $and: [{ inventory: { $eq: inventory, $exists: true, $ne: null } }] },
-        { $and: [{ author: { $eq: author, $exists: true, $ne: null } }] },
-        { $and: [{ genre: { $eq: genre, $exists: true, $ne: null } }] },
-        { $and: [{ provenance: { $eq: provenance, $exists: true, $ne: null } }] },
-        { $and: [{ material: { $eq: material, $exists: true, $ne: null } }] },
-        { $and: [{ acquisition: { $eq: acquisition, $exists: true, $ne: null } }] },
-        { $and: [{ bookform: { $eq: bookform, $exists: true, $ne: null } }] },
-        { $and: [{ fragment: { $eq: fragment, $exists: true, $ne: null } }] },
-      ]
-    })
-      .select('-photo')
-      .exec();
+  var q = {}; // declare the query object
+  q['$and']=[]; // filter the search by any criteria given by the user
+  if(inventory!=""&&inventory!=null){ // if the criteria has a value or values
+    q["$and"].push( { $and: [{ inventory: { $eq: inventory}}, { inventory: {$exists: true}}]}); // add to the query object
+  }
+  if(author!=""&&author!=null){ // if the criteria has a value or values
+    q["$and"].push( { $and: [{ author: { $eq: author}}, { author: {$exists: true}}]});// add to the query object
+  }
+  if(genre!=""&&genre!=null){ // if the criteria has a value or values
+    q["$and"].push( { $and: [{ genre: { $eq: genre}}, { genre: {$exists: true}}]});// add to the query object
+  }
+  if(provenance!=""&&provenance!=null){ // if the criteria has a value or values
+    q["$and"].push( { $and: [{ provenance: { $eq: provenance}}, { provenance: {$exists: true}}]}); // add to the query object
+  }
+  if(material!=""&&material!=null){ // if the criteria has a value or values
+    q["$and"].push( { $and: [{ material: { $eq: material}}, { material: {$exists: true}}]});// add to the query object
+  }
+  if(acquisition!=""&&acquisition!=null){ // if the criteria has a value or values
+    q["$and"].push( { $and: [{ acquisition: { $eq: acquisition}}, { acquisition: {$exists: true}}]});// add to the query object
+  }
+  if(bookform!=""&&bookform!=null){ // if the criteria has a value or values
+    q["$and"].push( { $and: [{ bookform: { $eq: bookform}}, { bookform: {$exists: true}}]}); // add to the query object
+  }
+  if(fragment!=""&&fragment!=null){ // if the criteria has a value or values
+    q["$and"].push( { $and: [{ fragment: { $eq: fragment}}, { fragment: {$exists: true}}]});// add to the query object
+  }
+  if(TM!=""&&TM!=null){ // if the criteria has a value or values
+    q["$and"].push( { $and: [{ TM: { $eq: TM}}, { TM: {$exists: true}}]});// add to the query object
+  }
+  if(dataGt!=0&&dataLt!=0){
+    q["$and"].push(  { $and: [{ editiondata: { $gte: dataGt, $lte: (dataLt < 1 ? 100000 : dataLt), $exists: true } }] },)
+  }
+
+  console.log("query q::"+JSON.stringify(q));
+  const allposts = await Allposts.find(q).select("-photo").exec();
 
     res.json(allposts);
   }
