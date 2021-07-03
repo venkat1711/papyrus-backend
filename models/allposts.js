@@ -86,7 +86,7 @@ const allpostsSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    No of columns: {
+    columns: {
       type: String,
       trim: true,
     },
@@ -146,6 +146,33 @@ const allpostsSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    intercolumnspace:{
+      type: String,
+      trim: true,
+    },
+    linespercolumn:{
+      type: String,
+      trim: true,
+    },
+    numberoffolios:{
+      type: String,
+      trim: true,
+    },
+    externalMargin:{
+      type: String,
+      trim: true,
+    },
+    innerMargin:{
+      type: String,
+      trim: true,
+    },
+    lateralMargin:{
+      type: String,
+      trim: true,
+    },
+    number:{
+      type: Number
+    }
   },
   { timestamps: true }
 );
