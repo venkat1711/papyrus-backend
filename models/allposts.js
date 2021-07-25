@@ -176,6 +176,10 @@ const allpostsSchema = new mongoose.Schema(
     PN:{
       type: String,
       trim: true,
+    },
+    work:{
+      type: String,
+      trim: true,
     }
   },
   { timestamps: true }
