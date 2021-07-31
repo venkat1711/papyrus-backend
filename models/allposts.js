@@ -180,6 +180,10 @@ const allpostsSchema = new mongoose.Schema(
     work:{
       type: String,
       trim: true,
+    },
+    digitalImageLink:{
+      type: String,
+      trim: true,
     }
   },
   { timestamps: true }
