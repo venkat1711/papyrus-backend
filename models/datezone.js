@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const datezoneSchema = new mongoose.Schema(
   {
     name: {
-      type: Number,
+      type: String,
       trim: true,
       required: true,
       maxlength: 32,

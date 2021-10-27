@@ -126,7 +126,8 @@ exports.allpostsCount = async (req, res) => {
 
 
 const handleQuery = async (req, res, query) => {
-  const { inventory, author, genre, provenance, material, acquisition, bookform, fragment, dataGt, dataLt, dimension, cartonnage ,TM} = query;
+  const { inventory, author, genre, provenance, material, acquisition, bookform, fragment, 
+    dataGt, dataLt, dimension, cartonnage ,TM,inventoryNumber} = query;
 
   /*if (dataGt || dataLt !== 0) {
     const allposts = await Allposts.find({
@@ -149,7 +150,7 @@ const handleQuery = async (req, res, query) => {
   } else*/
    if(dataGt==0&&dataLt==0 && inventory===""&&bookform===""
   &&genre===""&&provenance===""
-  && material===""&&acquisition===""&&TM==0){
+  && material===""&&acquisition===""&&TM==0&&inventoryNumber===""){
     console.log("test log");
     const allposts = await Allposts.find()
       .select('-photo')
@@ -187,6 +188,9 @@ const handleQuery = async (req, res, query) => {
   if(TM!=""&&TM!=null){ // if the criteria has a value or values
     q["$and"].push( { $and: [{ TM: { $eq: TM}}, { TM: {$exists: true}}]});// add to the query object
   }
+  if(inventoryNumber!=""&&inventoryNumber!=null){ // if the criteria has a value or values
+    q["$and"].push( { $and: [{ inventoryNumber: { $eq: inventoryNumber}}, { inventoryNumber: {$exists: true}}]});// add to the query object
+  }
   if(dataGt!=0&&dataLt!=0){
     q["$and"].push(  { $and: [{ editiondata: { $gte: dataGt, $lte: (dataLt < 1 ? 100000 : dataLt), $exists: true } }] },)
   }
@@ -204,3 +208,24 @@ exports.searchFilters = async (req, res) => {
     await handleQuery(req, res, req.body);
   }
 }
+
+exports.inventoryNumber= async (req, res) => {
+  let order = req.query.order ? req.query.order : "desc";
+  let sortBy = req.query.sortBy ? req.query.sortBy : "inventoryNumber";
+  // let page = req.body.limit;
+
+  await Allposts.find()
+    .select('inventoryNumber').distinct( "inventoryNumber" )
+
+    .where("inventoryNumber").ne(null)
+    //.sort([[sortBy, order]])
+    // .limit(page)
+    .exec((err, data) => {
+      if (err) {
+        return res.status(400).json({
+          error: errorHandler(err),
+        });
+      }
+      res.json(data);
+    });
+};

@@ -10,6 +10,7 @@ const {
   list,
   photo,
   searchFilters,
+  inventoryNumber,
 } = require('../controllers/allposts');
 const { requireSignin, isAuth, isAdmin } = require('../controllers/auth');
 const { userById } = require('../controllers/user');
@@ -35,6 +36,7 @@ router.get('/allposts/photo/:allpostsId', photo);
 
 router.post('/allposts', list);
 router.post('/search/filters', searchFilters);
+router.get('/inventoryNumber',inventoryNumber);
 
 router.param('allpostsId', allpostsById);
 router.param('userId', userById);
