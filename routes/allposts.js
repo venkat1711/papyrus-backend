@@ -11,6 +11,7 @@ const {
   photo,
   searchFilters,
   inventoryNumber,
+  searchposts,
 } = require('../controllers/allposts');
 const { requireSignin, isAuth, isAdmin } = require('../controllers/auth');
 const { userById } = require('../controllers/user');
@@ -40,5 +41,7 @@ router.get('/inventoryNumber',inventoryNumber);
 
 router.param('allpostsId', allpostsById);
 router.param('userId', userById);
+
+router.post('/search/posts', searchposts);
 
 module.exports = router;
