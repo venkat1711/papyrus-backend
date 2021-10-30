@@ -229,3 +229,46 @@ exports.inventoryNumber= async (req, res) => {
       res.json(data);
     });
 };
+
+exports.searchposts= async (req, res) => {
+  if (req.body) {
+    await handleQueryForSeachPosts(req, res, req.body);
+  }
+};
+
+const handleQueryForSeachPosts = async (req, res, query) => {
+  //const { inputvalue} = query;
+  let json=JSON.stringify(query);
+  var objectValue = JSON.parse(json);
+       const inputvalue=objectValue['val'];
+console.log("body"+JSON.stringify(inputvalue));
+  
+   if(inputvalue==""){
+    console.log("test log");
+    const allposts = await Allposts.find()
+      .select('-photo')
+      .exec();
+
+    res.json(allposts);
+  }else{
+    console.log("test log final*************"+inputvalue);
+  var q = {}; // declare the query object
+  q['$or']=[]; // filter the search by any criteria given by the user
+   // q["$and"].push( { $or: [{ inventory: { $eq: inputvalue}}, { inventory: {$exists: true}}]}); // add to the query object
+      q["$or"].push( { $or: [{ inventoryNumber: { $eq: inputvalue}}]});// add to the query object
+      q["$or"].push( { $or: [{ inventory: { $eq: inputvalue}}]});
+      q["$or"].push( { $or: [{ author: { $eq: inputvalue}}]});
+      q["$or"].push( { $or: [{ genre: { $eq: inputvalue}}]});
+      q["$or"].push( { $or: [{ provenance: { $eq: inputvalue}}]});
+      q["$or"].push( { $or: [{ bookform: { $eq: inputvalue}}]});
+      q["$or"].push( { $or: [{ fragment: { $eq: inputvalue}}]});
+      q["$or"].push( { $or: [{ TM: { $eq: inputvalue}}]});
+      
+ 
+
+  console.log("query q::"+JSON.stringify(q));
+  const allposts = await Allposts.find(q).select("-photo").exec();
+
+    res.json(allposts);
+  }
+}
