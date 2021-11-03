@@ -5,6 +5,7 @@ exports.create = (req, res) => {
     //const pageContent = new PageContent(req.body);
     PageContent.findOneAndUpdate({"name":"homepage"}, req.body,{upsert: true}, function (err, data) {
         //pageContent.save((err, data) => {
+            console.log("while saving>>>"+JSON.stringify(err))
           if (err) {
             return res.status(400).json({
                 error: errorHandler(err),
