@@ -23,7 +23,7 @@ const allpostsSchema = new mongoose.Schema(
       trim: true,
     },
     editiondata: {
-      type: Number,
+      type: String,
       trim: true,
     },
     acquisition: {
