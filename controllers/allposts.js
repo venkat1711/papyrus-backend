@@ -128,7 +128,13 @@ exports.allpostsCount = async (req, res) => {
 const handleQuery = async (req, res, query) => {
   const { inventory, author, genre, provenance, material, acquisition, bookform, fragment, 
     dataGt, dataLt, dimension, cartonnage ,TM,inventoryNumber} = query;
-
+    let order = req.query.order ? req.query.order : "asc";
+    let sortBy = req.query.sortBy ? req.query.sortBy : "papyrusId";
+    let perPage=10;
+    let page=req.body.page;
+    if(!page){
+      page=1;
+    }
   /*if (dataGt || dataLt !== 0) {
     const allposts = await Allposts.find({
       $or: [
@@ -154,9 +160,14 @@ const handleQuery = async (req, res, query) => {
     console.log("test log");
     const allposts = await Allposts.find()
       .select('-photo')
+      .sort([[sortBy, order]])
+      .limit(perPage)
+      .skip(perPage * (page-1))
       .exec();
 
-    res.json(allposts);
+    //res.json(pagination(allposts,page));
+    console.log("all***"+allposts);
+    pagination(allposts,page,res)
   }else{
     console.log("test log final");
   var q = {}; // declare the query object
@@ -196,12 +207,27 @@ const handleQuery = async (req, res, query) => {
   }
 
   console.log("query q::"+JSON.stringify(q));
-  const allposts = await Allposts.find(q).select("-photo").exec();
+  const allposts = await Allposts.find(q).select("-photo")
+  .limit(perPage)
+  .skip(perPage * (page-1))
+  .exec();
 
-    res.json(allposts);
+    //res.json(pagination(allposts,page));
+    console.log(pagination(allposts,page));
+    pagination(allposts,page)
   }
 }
 
+function pagination( data,page,res) {
+  Allposts.count().exec(function(err, count) {
+    console.log("count***"+count)
+     res.json( {
+          data: data,
+          page: page,
+          pages: Math.round(count / 10)
+      });
+  })
+}
 exports.searchFilters = async (req, res) => {
   // console.log(req.body);
   if (req.body) {
@@ -242,11 +268,13 @@ const handleQueryForSeachPosts = async (req, res, query) => {
   var objectValue = JSON.parse(json);
        const inputvalue=objectValue['val'];
 console.log("body"+JSON.stringify(inputvalue));
-  
+let order = req.query.order ? req.query.order : "asc";
+let sortBy = req.query.sortBy ? req.query.sortBy : "papyrusId";
    if(inputvalue==""){
     console.log("test log");
     const allposts = await Allposts.find()
       .select('-photo')
+      .sort([[sortBy, order]])
       .exec();
 
     res.json(allposts);
@@ -256,13 +284,14 @@ console.log("body"+JSON.stringify(inputvalue));
   q['$or']=[]; // filter the search by any criteria given by the user
    // q["$and"].push( { $or: [{ inventory: { $eq: inputvalue}}, { inventory: {$exists: true}}]}); // add to the query object
       q["$or"].push( { $or: [{ inventoryNumber: { $eq: inputvalue}}]});// add to the query object
-      q["$or"].push( { $or: [{ inventory: { $eq: inputvalue}}]});
+      q["$or"].push( { $or: [{ inventory:{ $regex: '.*' + inputvalue + '.*' }}]});
       q["$or"].push( { $or: [{ author: { $eq: inputvalue}}]});
       q["$or"].push( { $or: [{ genre: { $eq: inputvalue}}]});
       q["$or"].push( { $or: [{ provenance: { $eq: inputvalue}}]});
       q["$or"].push( { $or: [{ bookform: { $eq: inputvalue}}]});
       q["$or"].push( { $or: [{ fragment: { $eq: inputvalue}}]});
       q["$or"].push( { $or: [{ TM: { $eq: inputvalue}}]});
+      q["$or"].push({$or:[{papyrusId:{ $regex: '.*' + inputvalue + '.*' }}]});
       
  
 
