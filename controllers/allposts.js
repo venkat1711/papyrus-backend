@@ -213,19 +213,24 @@ const handleQuery = async (req, res, query) => {
   .exec();
 
     //res.json(pagination(allposts,page));
-    console.log(pagination(allposts,page));
-    pagination(allposts,page)
+    //console.log(pagination(allposts,page));
+    pagination(allposts,page,res,q)
   }
 }
 
-function pagination( data,page,res) {
-  Allposts.count().exec(function(err, count) {
+function pagination( data,page,res,q) {
+  Allposts.find(q).count().exec(function(err, count) {
     console.log("count***"+count)
+    //console.log("res obj"+JSON.stringify(res));
+    if(res!=undefined){
      res.json( {
           data: data,
           page: page,
           pages: Math.round(count / 10)
       });
+    }else{
+      res.json([]);
+    }
   })
 }
 exports.searchFilters = async (req, res) => {
